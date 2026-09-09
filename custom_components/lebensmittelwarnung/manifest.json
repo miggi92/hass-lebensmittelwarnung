@@ -2,7 +2,7 @@
   "domain": "lebensmittelwarnung",
   "name": "Lebensmittelwarnung.de",
   "codeowners": [
-    "miggi92"
+    "@miggi92"
   ],
   "config_flow": true,
   "documentation": "https://github.com/miggi92/hass-lebensmittelwarnung",
