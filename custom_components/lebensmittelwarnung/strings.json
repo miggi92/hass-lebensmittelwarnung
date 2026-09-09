@@ -3,14 +3,24 @@
     "step": {
       "user": {
         "title": "Lebensmittelwarnung.de",
-        "description": "Wähle das Bundesland, dessen Meldungen du verfolgen möchtest.",
+        "description": "Wähle Meldungsart und Bundesland, die du verfolgen möchtest.",
         "data": {
+          "meldungsart": "Meldungsart",
+          "bundesland": "Bundesland"
+        }
+      },
+      "reconfigure": {
+        "title": "Lebensmittelwarnung.de",
+        "description": "Passe Meldungsart und Bundesland an.",
+        "data": {
+          "meldungsart": "Meldungsart",
           "bundesland": "Bundesland"
         }
       }
     },
     "abort": {
-      "already_configured": "Dieses Bundesland ist bereits eingerichtet."
+      "already_configured": "Diese Kombination aus Meldungsart und Bundesland ist bereits eingerichtet.",
+      "reconfigure_successful": "Die Einstellungen wurden aktualisiert."
     }
   },
   "entity": {

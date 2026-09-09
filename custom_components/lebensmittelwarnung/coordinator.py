@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DEFAULT_SCAN_INTERVAL, FEED_URL, STATES, USER_AGENT
+from .const import DEFAULT_SCAN_INTERVAL, FEED_URL, STATES, TYPES, USER_AGENT
 from .parser import parse_entry
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,8 +25,14 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
     """Ruft den Feed ab und liefert eine Liste geparster Meldungen."""
 
     def __init__(
-        self, hass: HomeAssistant, entry: ConfigEntry, state_key: str
+        self,
+        hass: HomeAssistant,
+        entry: ConfigEntry,
+        type_key: str,
+        state_key: str,
     ) -> None:
+        self.type_key = type_key
+        self.type_name = TYPES.get(type_key, type_key)
         self.state_key = state_key
         self.state_name = STATES.get(state_key, state_key)
         self._session = async_get_clientsession(hass)
@@ -34,16 +40,19 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         super().__init__(
             hass,
             _LOGGER,
-            name=f"Lebensmittelwarnung {self.state_name}",
+            name=f"Lebensmittelwarnung {self.type_name} – {self.state_name}",
             config_entry=entry,
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
 
     @property
     def feed_url(self) -> str:
-        if not self.state_key:
-            return FEED_URL
-        return f"{FEED_URL}&state={self.state_key}"
+        url = FEED_URL
+        if self.type_key:
+            url += f"&type={self.type_key}"
+        if self.state_key:
+            url += f"&state={self.state_key}"
+        return url
 
     @property
     def latest(self) -> dict[str, Any] | None:
