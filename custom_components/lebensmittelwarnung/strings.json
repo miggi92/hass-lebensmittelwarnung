@@ -1,0 +1,54 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Lebensmittelwarnung.de",
+        "description": "Wähle das Bundesland, dessen Meldungen du verfolgen möchtest.",
+        "data": {
+          "bundesland": "Bundesland"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Dieses Bundesland ist bereits eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "latest": {
+        "name": "Letzte Meldung"
+      },
+      "reason": {
+        "name": "Grund"
+      },
+      "batch": {
+        "name": "Chargennummer"
+      },
+      "expiry": {
+        "name": "Haltbarkeit"
+      },
+      "product": {
+        "name": "Produktbezeichnung"
+      },
+      "manufacturer": {
+        "name": "Hersteller"
+      },
+      "count": {
+        "name": "Anzahl Meldungen"
+      },
+      "published": {
+        "name": "Veröffentlicht"
+      }
+    },
+    "image": {
+      "product_image": {
+        "name": "Produktbild"
+      }
+    },
+    "binary_sensor": {
+      "recent_warning": {
+        "name": "Aktuelle Warnung"
+      }
+    }
+  }
+}

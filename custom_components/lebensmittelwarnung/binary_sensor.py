@@ -38,9 +38,7 @@ class LmwRecentWarning(LmwEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         entry = self.coordinator.latest
-        if entry is None or not entry.get("published"):
-            return False
-        published = dt_util.parse_datetime(entry["published"])
+        published = entry.get("published") if entry else None
         if published is None:
             return False
         return dt_util.utcnow() - published < RECENT_WINDOW

@@ -6,7 +6,12 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+)
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -23,6 +28,20 @@ def _shorten(value: Any) -> str | None:
         return None
     text = str(value).replace("\n", " | ")
     return text[:MAX_STATE_LENGTH]
+
+
+# Die Gründe sind ein fester Satz von sieben Werten (siehe Filter auf
+# lebensmittelwarnung.de). Bei Mehrfachnennungen gewinnt der erste Treffer.
+REASON_ICONS: dict[str, str] = {
+    "Krankheitserreger": "mdi:bacteria-outline",
+    "Allergene": "mdi:peanut-off-outline",
+    "Fremdkörper": "mdi:magnet-on",
+    "Gesundheitsschädliche Substanz": "mdi:skull-crossbones-outline",
+    "Rückstände und Kontaminanten": "mdi:flask-outline",
+    "Irreführung und Täuschung": "mdi:eye-off-outline",
+    "Sonstige Gründe": "mdi:dots-horizontal-circle-outline",
+}
+DEFAULT_REASON_ICON = "mdi:alert-octagon-outline"
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -79,8 +98,15 @@ SENSORS: tuple[LmwSensorDescription, ...] = (
         value_fn=lambda entry: entry.get("manufacturer"),
     ),
     LmwSensorDescription(
+        key="published",
+        translation_key="published",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=lambda entry: entry.get("published"),
+    ),
+    LmwSensorDescription(
         key="count",
         translation_key="count",
+        entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda entry: None,  # wird im Sensor überschrieben
     ),
 )
@@ -114,7 +140,11 @@ class LmwSensor(LmwEntity, SensorEntity):
         entry = self.coordinator.latest
         if entry is None:
             return None
-        return _shorten(self.entity_description.value_fn(entry))
+
+        value = self.entity_description.value_fn(entry)
+        if self.entity_description.device_class is SensorDeviceClass.TIMESTAMP:
+            return value
+        return _shorten(value)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
@@ -122,3 +152,22 @@ class LmwSensor(LmwEntity, SensorEntity):
         if entry is None or self.entity_description.attr_fn is None:
             return None
         return self.entity_description.attr_fn(entry)
+
+    @property
+    def icon(self) -> str | None:
+        """Beim Grund-Sensor richtet sich das Icon nach der Art der Meldung.
+
+        Alle übrigen Icons kommen aus icons.json; None bedeutet dort:
+        Standard verwenden.
+        """
+        if self.entity_description.key != "reason":
+            return None
+
+        entry = self.coordinator.latest
+        if entry is None:
+            return DEFAULT_REASON_ICON
+
+        for reason in entry.get("reasons") or []:
+            if icon := REASON_ICONS.get(reason):
+                return icon
+        return DEFAULT_REASON_ICON

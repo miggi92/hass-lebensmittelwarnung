@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import calendar
+from datetime import UTC, datetime
 import html
 import re
 from typing import Any
@@ -44,11 +46,17 @@ def parse_entry(entry: Any) -> dict[str, Any]:
     description: str = entry.get("description") or ""
     images = extract_images(description)
 
+    # published ist im Feed RFC 822 ("Fri, 4 Sep 2026 15:00:00 +0200").
+    # feedparser liefert daraus published_parsed als struct_time in UTC.
+    published: datetime | None = None
+    if parsed_time := entry.get("published_parsed"):
+        published = datetime.fromtimestamp(calendar.timegm(parsed_time), tz=UTC)
+
     data: dict[str, Any] = {
         "title": _clean(entry.get("title") or ""),
         "link": entry.get("link"),
         "guid": entry.get("id") or entry.get("link"),
-        "published": entry.get("published"),
+        "published": published,
         "images": images,
         "image": images[0] if images else None,
         "has_real_image": bool(images) and DUMMY_IMAGE_MARKER not in images[0],
