@@ -3,6 +3,13 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## [0.0.9] - 2026-09-11
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.8 aktualisiert
+
+
 ## [0.0.8] - 2026-09-11
 
 ### ✨ Features
