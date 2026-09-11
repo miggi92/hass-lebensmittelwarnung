@@ -38,7 +38,7 @@ Copy the `custom_components/lebensmittelwarnung` folder to your Home Assistant `
 
 ## Screenshots
 
-
+![Screenshot Integration Screen](https://github.com/miggi92/static/blob/master/assets/screenshots/integration_screen.png)
 
 ## Sponsors
 
