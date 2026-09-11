@@ -4,5 +4,6 @@
   "render_readme": true,
   "homeassistant": "2026.09.1",
   "zip_release": true,
-  "filename": "lebensmittelwarnung.zip"
+  "filename": "lebensmittelwarnung.zip",
+  "country": "DE"
 }
