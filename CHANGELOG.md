@@ -3,6 +3,18 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## v0.0.10
+
+[compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.9...v0.0.10)
+
+### ✨ Features
+
+- ✨  added agents file ([e7b9aa4](https://github.com/miggi92/hass-lebensmittelwarnung/commit/e7b9aa4))
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.9 aktualisiert ([8a30a4c](https://github.com/miggi92/hass-lebensmittelwarnung/commit/8a30a4c))
+
 ## [0.0.9] - 2026-09-11
 
 ### 📚 Dokumentation
