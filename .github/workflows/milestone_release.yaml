@@ -18,7 +18,13 @@ jobs:
       - name: 🚀 Release erstellen
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Der automatische GITHUB_TOKEN löst absichtlich keine Folge-Workflows
+          # aus (Schutz vor Trigger-Schleifen) - ein damit erstellter Release
+          # würde also NICHT den "release: published"-Trigger in publish.yaml
+          # auslösen. RELEASE_TOKEN ist ein Personal Access Token mit
+          # "Contents: Read and write" auf dieses Repo, hinterlegt als
+          # Repository-Secret unter Settings > Secrets and variables > Actions.
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           TITLE="${{ github.event.milestone.title }}"
 
