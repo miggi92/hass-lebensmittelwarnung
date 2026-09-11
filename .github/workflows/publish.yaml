@@ -4,6 +4,11 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag, für den der Workflow nachträglich laufen soll (z.B. v0.0.6)"
+        required: true
 
 jobs:
   release_zip_file:
@@ -12,10 +17,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: 🏷️ Tag ermitteln
+        id: tag
+        run: echo "value=${{ github.event.release.tag_name || github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+
       - name: 🛍️ Checkout the repo
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ steps.tag.outputs.value }}
 
       - name: 🐍 Setup Python
         uses: actions/setup-python@v7
@@ -24,27 +34,26 @@ jobs:
 
       - name: 📝 Update manifest version
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${{ steps.tag.outputs.value }}"
           VERSION="${VERSION#v}"  # Remove 'v' prefix if it exists
           sed -i 's/"version": "[^"]*"/"version": "'"$VERSION"'"/' '${{ github.workspace }}/custom_components/lebensmittelwarnung/manifest.json'
 
       - name: 🤐 Copy and Zip
-        if: ${{ github.event_name == 'release' }}
         run: |
           cd '${{ github.workspace }}/custom_components/lebensmittelwarnung'
           zip lebensmittelwarnung.zip -r ./
 
       - name: ☁️ Upload zip to release
         uses: softprops/action-gh-release@v3.0.3
-        if: ${{ github.event_name == 'release' }}
         with:
+          tag_name: ${{ steps.tag.outputs.value }}
           files: "${{ github.workspace }}/custom_components/lebensmittelwarnung/lebensmittelwarnung.zip"
 
       - name: 📜 Changelog generieren
         uses: orhun/git-cliff-action@v4
         with:
           config: cliff.toml
-          args: --tag ${{ github.event.release.tag_name }}
+          args: --tag ${{ steps.tag.outputs.value }}
         env:
           OUTPUT: CHANGELOG.md
 
@@ -54,7 +63,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           if ! git diff --cached --quiet; then
-            git commit -m "docs: Changelog für ${{ github.event.release.tag_name }} aktualisiert"
+            git commit -m "docs: Changelog für ${{ steps.tag.outputs.value }} aktualisiert"
             git push origin HEAD:main
           fi
 
@@ -62,7 +71,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${{ steps.tag.outputs.value }}"
           VERSION="${VERSION#v}"
           awk -v ver="$VERSION" '
             /^## \[/ {
@@ -72,4 +81,4 @@ jobs:
             }
             printing { print }
           ' CHANGELOG.md | sed -e '/./,$!d' > release_notes.md
-          gh release edit "${{ github.event.release.tag_name }}" --notes-file release_notes.md
+          gh release edit "${{ steps.tag.outputs.value }}" --notes-file release_notes.md
