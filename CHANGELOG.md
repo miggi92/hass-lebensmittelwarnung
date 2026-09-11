@@ -3,6 +3,27 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## [0.0.7] - 2026-09-11
+
+### 🐛 Bugfixes
+
+- Milestone-Release löst Publish-Workflow nicht aus
+
+
+## [0.0.6] - 2026-09-11
+
+### ✨ Features
+
+- Release-Beschreibung mit generiertem Changelog befüllen
+
+- Release automatisch beim Schließen eines Milestones erstellen
+
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.5 aktualisiert
+
+
 ## [0.0.5] - 2026-09-11
 
 ### ✨ Features
