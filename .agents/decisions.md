@@ -10,6 +10,21 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-11 – `.agents/AGENTS.md` ist ein Verweis, kein zweiter Index
+
+**Entscheidung:** `.agents/AGENTS.md` importiert die Themendateien nicht
+selbst noch einmal, sondern verweist nur auf `CLAUDE.md` im Repo-Root.
+
+**Warum:** Zwei Dateien mit identischer Import-Liste würden bei der nächsten
+Änderung garantiert auseinanderlaufen – genau das Problem, das dieses Log
+verhindern soll. `CLAUDE.md` bleibt die einzige maßgebliche Einstiegsdatei;
+`AGENTS.md` existiert nur, weil manche Tools gezielt danach suchen.
+
+**Zu beachten:** Diese Datei liegt unter `.agents/`, nicht im Repo-Root. Tools,
+die die AGENTS.md-Konvention nutzen, erwarten sie meist im Root – falls
+breitere Cross-Tool-Kompatibilität gewünscht ist, wäre eine zusätzliche, sehr
+kurze `AGENTS.md` im Root (mit demselben Verweis) der nächste Schritt.
+
 ## 2026-09-11 – `.agents/`-Doku für KI-Agents eingeführt
 
 **Entscheidung:** Konventionen in `.agents/*.md` auslagern, per `@`-Import in
