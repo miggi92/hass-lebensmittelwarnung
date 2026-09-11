@@ -32,6 +32,18 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: 🧶 Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: 🟢 Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: 📦 Dependencies installieren
+        run: pnpm install --frozen-lockfile
+
       - name: 📝 Update manifest version
         run: |
           VERSION="${{ steps.tag.outputs.value }}"
@@ -50,12 +62,17 @@ jobs:
           files: "${{ github.workspace }}/custom_components/lebensmittelwarnung/lebensmittelwarnung.zip"
 
       - name: 📜 Changelog generieren
-        uses: orhun/git-cliff-action@v4
-        with:
-          config: cliff.toml
-          args: --tag ${{ steps.tag.outputs.value }}
-        env:
-          OUTPUT: CHANGELOG.md
+        run: |
+          TAG="${{ steps.tag.outputs.value }}"
+          VERSION="${TAG#v}"
+          PREV_TAG="$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || true)"
+
+          ARGS=(--to "$TAG" -r "$VERSION" --output CHANGELOG.md)
+          if [ -n "$PREV_TAG" ]; then
+            ARGS=(--from "$PREV_TAG" "${ARGS[@]}")
+          fi
+
+          pnpm exec changelogen "${ARGS[@]}"
 
       - name: 💾 Changelog committen
         run: |
@@ -73,12 +90,10 @@ jobs:
         run: |
           VERSION="${{ steps.tag.outputs.value }}"
           VERSION="${VERSION#v}"
-          awk -v ver="$VERSION" '
-            /^## \[/ {
-              if (printing) exit
-              if (index($0, "[" ver "]") > 0) { printing=1; next }
-              next
-            }
+          HEADING="## v$VERSION"
+          awk -v heading="$HEADING" '
+            $0 == heading { printing=1; next }
+            /^## / { if (printing) exit }
             printing { print }
           ' CHANGELOG.md | sed -e '/./,$!d' > release_notes.md
           gh release edit "${{ steps.tag.outputs.value }}" --notes-file release_notes.md
