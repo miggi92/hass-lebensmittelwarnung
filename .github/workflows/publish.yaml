@@ -57,3 +57,19 @@ jobs:
             git commit -m "docs: Changelog für ${{ github.event.release.tag_name }} aktualisiert"
             git push origin HEAD:main
           fi
+
+      - name: 📋 Release-Beschreibung aus Changelog übernehmen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          awk -v ver="$VERSION" '
+            /^## \[/ {
+              if (printing) exit
+              if (index($0, "[" ver "]") > 0) { printing=1; next }
+              next
+            }
+            printing { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' > release_notes.md
+          gh release edit "${{ github.event.release.tag_name }}" --notes-file release_notes.md
