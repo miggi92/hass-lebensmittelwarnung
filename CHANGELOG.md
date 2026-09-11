@@ -3,49 +3,93 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## [0.0.5] - 2026-09-11
+
+### ✨ Features
+
+- added installation and sponsors
+
+- Changelog per git-cliff automatisiert erzeugen
+
+
+### 🐛 Bugfixes
+
+- fixed screenshot path
+
+
+### 📚 Dokumentation
+
+- added badges
+
+- added config
+
+- added screenshots
+
+- PR-Template hinzugefügt
+
+
+### 🔧 Sonstiges
+
+- update english texts
+
 
 ## [0.0.4] - 2026-09-11
 
-### Bugfixes
+### 🐛 Bugfixes
 
 - Content-Type mit charset beim Bild-Abruf bricht Auslieferung
 
+
 ## [0.0.3] - 2026-09-09
 
-### Features
+### ✨ Features
 
 - Meldungsart-Auswahl, Reconfigure und Sensoren pro Datei
 
-### Bugfixes
+
+### 🐛 Bugfixes
 
 - CODEOWNERS-Format und lokale Brand-Icons für HACS
 
-### Sonstiges
+
+### 🔧 Sonstiges
 
 - Versionsschema auf Patch-Increment umstellen (0.0.3)
 
+
 ## [0.0.2] - 2026-09-09
 
-### Features
+### ✨ Features
 
-- Icons hinzugefügt
-- Logo hinzugefügt
+- added icons
 
-### Bugfixes
+- added logo
 
-- Versionsnummer korrigiert
+- added logo
 
-### Sonstiges
 
-- Icon umbenannt
-- Home Assistant und Version aktualisiert
+### 🐛 Bugfixes
+
+- fixed version number
+
+
+### 🔧 Sonstiges
+
+- Renamed icon
+
+- update homeassistant and version
+
 
 ## [0.0.1] - 2026-09-09
 
-### Features
+### ✨ Features
 
-- Sensoren und Parse-Logik initialisiert
+- init sensors and parse logic
 
-### Sonstiges
 
-- Custom Component initialisiert
+### 🔧 Sonstiges
+
+- init custom component
+
+
+
