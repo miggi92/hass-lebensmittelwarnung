@@ -26,6 +26,20 @@
 
 Copy the `custom_components/lebensmittelwarnung` folder to your Home Assistant `custom_components` folder. Then restart Home Assistant.
 
+
+## Configuration
+
+1. Open the Home Assistant UI
+2. Go to `Configuration` > `Integrations`
+3. Click on `+ Add Integration`
+4. Search for `Lebensmittelwarnung`
+5. Enter the relevant information for the integration (e.g. your location or preferences as required by the integration)
+6. Click on `Submit`
+
+## Screenshots
+
+
+
 ## Sponsors
 
 ![Sponsors](https://github.com/miggi92/static/blob/master/sponsors.svg)
