@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import logging
 from typing import Any
 
@@ -12,6 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .const import DEFAULT_SCAN_INTERVAL, FEED_URL, STATES, TYPES, USER_AGENT
 from .parser import parse_entry
@@ -43,6 +44,9 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         self.state_name = STATES.get(state_key, state_key)
         self._session = async_get_clientsession(hass)
         self._consecutive_failures = 0
+        # Zeitpunkt des letzten tatsächlich erfolgreichen Abrufs. Wegen der
+        # Fehlertoleranz unten ist last_update_success dafür nicht aussagekräftig.
+        self.last_success: datetime | None = None
 
         super().__init__(
             hass,
@@ -85,6 +89,7 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
             raise
 
         self._consecutive_failures = 0
+        self.last_success = dt_util.utcnow()
         return entries
 
     async def _async_fetch_entries(self) -> list[dict[str, Any]]:

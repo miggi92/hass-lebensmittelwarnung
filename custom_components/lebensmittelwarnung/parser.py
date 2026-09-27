@@ -72,4 +72,10 @@ def parse_entry(entry: Any) -> dict[str, Any]:
         [part.strip() for part in reason.split(",") if part.strip()] if reason else []
     )
 
+    # "Betroffene Bundesländer" ist ebenfalls eine kommagetrennte Aufzählung.
+    states = data.get("states")
+    data["affected_states"] = (
+        [part.strip() for part in states.split(",") if part.strip()] if states else []
+    )
+
     return data

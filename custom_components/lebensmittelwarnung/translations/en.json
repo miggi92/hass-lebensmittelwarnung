@@ -51,6 +51,18 @@
       },
       "published": {
         "name": "Published"
+      },
+      "package": {
+        "name": "Package Unit"
+      },
+      "affected_states": {
+        "name": "Affected Federal States"
+      },
+      "recent_count": {
+        "name": "Warnings Last 7 Days"
+      },
+      "last_success": {
+        "name": "Last Successful Update"
       }
     },
     "image": {
@@ -61,6 +73,23 @@
     "binary_sensor": {
       "recent_warning": {
         "name": "Recent Warning"
+      }
+    },
+    "calendar": {
+      "warnings": {
+        "name": "Warnings"
+      }
+    },
+    "event": {
+      "new_warning": {
+        "name": "New Warning",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "new_warning": "New warning"
+            }
+          }
+        }
       }
     }
   }
