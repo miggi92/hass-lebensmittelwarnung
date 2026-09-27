@@ -27,9 +27,17 @@
     "step": {
       "init": {
         "title": "Watchlist",
-        "description": "Keywords searched for in the product, manufacturer and reason of each warning (case-insensitive, partial words match). The \"Watchlist Match\" sensor is on while a warning from the last 7 days matches.",
+        "description": "Keywords are searched for in the product, manufacturer and reason of each warning (case-insensitive, partial words match). Optionally, a product list from an entity can be checked as well, e.g. your Grocy stock. The \"Watchlist Match\" sensor is on while a warning from the last 7 days matches.",
         "data": {
-          "stichwoerter": "Keywords"
+          "stichwoerter": "Keywords",
+          "produkt_entity": "Product list (entity)",
+          "produkt_attribut": "Attribute containing the product list",
+          "produkt_namensfeld": "Field containing the product name"
+        },
+        "data_description": {
+          "produkt_entity": "Optional, e.g. sensor.grocy_stock. Leave empty to not use a product list.",
+          "produkt_attribut": "Entity attribute holding the products as a list (Grocy: products).",
+          "produkt_namensfeld": "Key of the name in each list item (Grocy: name). Ignored if the list contains plain strings."
         }
       }
     }

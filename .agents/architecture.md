@@ -53,6 +53,14 @@ Eintrag neu, daher liest der Coordinator sie nur einmal als
 `watchlist.py` (`find_matches`); Binary-Sensor und Event nutzen beide diese
 Funktion.
 
+Optional kommt eine **Produktliste aus einer Entity** dazu (z.B.
+`sensor.grocy_stock`, Attribut `products`, Feld `name` – alles im Options-Flow
+konfigurierbar, nicht fest auf Grocy verdrahtet). Die Namen werden bei jedem
+Zugriff live aus `hass.states` gelesen (`coordinator.product_names()`), nicht
+gecacht; der Watchlist-Sensor hört per `async_track_state_change_event` auf
+die Entity. Abgleich über `find_product_matches` mit Wortregel (siehe
+`decisions.md`), nicht über die Teilwort-Suche der Stichwörter.
+
 **Hinweis für lokale Tests:** Die Datei `calendar.py` überdeckt die
 Stdlib-`calendar`, wenn Python direkt aus dem Integrationsordner gestartet
 wird. In HA ist das egal (Paket-Import), Tests also vom Repo-Root aus starten.

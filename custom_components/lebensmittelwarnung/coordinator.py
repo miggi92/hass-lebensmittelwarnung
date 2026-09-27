@@ -16,6 +16,11 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_KEYWORDS,
+    CONF_PRODUCT_ATTRIBUTE,
+    CONF_PRODUCT_ENTITY,
+    CONF_PRODUCT_NAME_KEY,
+    DEFAULT_PRODUCT_ATTRIBUTE,
+    DEFAULT_PRODUCT_NAME_KEY,
     DEFAULT_SCAN_INTERVAL,
     FEED_URL,
     STATES,
@@ -23,7 +28,7 @@ from .const import (
     USER_AGENT,
 )
 from .parser import parse_entry
-from .watchlist import normalize_keywords
+from .watchlist import normalize_keywords, product_names
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +64,13 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         self.keywords: list[str] = normalize_keywords(
             entry.options.get(CONF_KEYWORDS)
         )
+        self.product_entity: str | None = entry.options.get(CONF_PRODUCT_ENTITY)
+        self._product_attribute: str = entry.options.get(
+            CONF_PRODUCT_ATTRIBUTE, DEFAULT_PRODUCT_ATTRIBUTE
+        )
+        self._product_name_key: str = entry.options.get(
+            CONF_PRODUCT_NAME_KEY, DEFAULT_PRODUCT_NAME_KEY
+        )
 
         super().__init__(
             hass,
@@ -81,6 +93,15 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
     def latest(self) -> dict[str, Any] | None:
         """Die jüngste Meldung, falls vorhanden."""
         return self.data[0] if self.data else None
+
+    def product_names(self) -> list[str]:
+        """Aktuelle Produktnamen aus der konfigurierten Entity (live gelesen)."""
+        return product_names(
+            self.hass,
+            self.product_entity,
+            self._product_attribute,
+            self._product_name_key,
+        )
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         try:

@@ -10,7 +10,7 @@ from . import LmwConfigEntry
 from .coordinator import LebensmittelwarnungCoordinator
 from .entity import LmwEntity
 from .sensors.base import entry_attributes
-from .watchlist import find_matches
+from .watchlist import find_matches, find_product_matches
 
 EVENT_NEW_WARNING = "new_warning"
 
@@ -57,16 +57,19 @@ class LmwNewWarningEvent(LmwEntity, EventEntity):
         # vergessen: fällt eine Meldung kurz aus dem Feed und taucht wieder
         # auf, soll sie nicht erneut melden. Bei ~10 Meldungen pro Tag ist
         # das Set auch über Jahre vernachlässigbar klein.
+        products = self.coordinator.product_names() if new else []
         for entry in reversed(new):
             self._seen.add(entry["guid"])
+            found_keywords = find_matches(entry, self.coordinator.keywords)
+            found_products = find_product_matches(entry, products)
             self._trigger_event(
                 EVENT_NEW_WARNING,
                 {
                     "titel": entry["title"],
                     **entry_attributes(entry),
-                    "watchlist_treffer": find_matches(
-                        entry, self.coordinator.keywords
-                    ),
+                    # Alle Treffer zusammen, zum einfachen Filtern in Automationen.
+                    "watchlist_treffer": found_keywords + found_products,
+                    "watchlist_produkte": found_products,
                 },
             )
         super()._handle_coordinator_update()

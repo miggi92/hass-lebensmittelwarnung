@@ -19,6 +19,8 @@ async def async_get_config_entry_diagnostics(
         "coordinator": {
             "feed_url": coordinator.feed_url,
             "keywords": coordinator.keywords,
+            "product_entity": coordinator.product_entity,
+            "product_names": coordinator.product_names(),
             "last_update_success": coordinator.last_update_success,
             "last_success": coordinator.last_success,
             "consecutive_failures": coordinator._consecutive_failures,  # noqa: SLF001
