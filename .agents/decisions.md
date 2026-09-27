@@ -10,6 +10,26 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-27 – Watchlist-Binary-Sensor per Options-Flow
+
+**Entscheidungen (Nutzerentscheidungen aus einer expliziten Rückfrage):**
+
+1. Eine Stichwortliste pro Feed-Eintrag im Options-Flow, keine mehreren
+   benannten Listen (Subentries).
+2. Gesucht wird nur in Produkt, Hersteller und Grund – nicht in Kontakt,
+   Haltbarkeit oder Charge (Adressen/Hotlines erzeugen Fehlalarme, z.B.
+   „Berlin“). Groß-/Kleinschreibung egal, Teilwort-Suche wegen deutscher
+   Komposita („Käse“ findet „Weinbauernkäse“); dass kurze Stichwörter wie
+   „Ei“ dadurch zu viel finden, ist bewusst in Kauf genommen.
+3. `binary_sensor.watchlist` ist an, solange eine Meldung der letzten 7 Tage
+   passt (fest, nicht konfigurierbar); eigener Ablauf-Timer wie beim
+   24h-Sensor. Er wird auch ohne Stichwörter angelegt (dann `off`), damit die
+   Entity-ID stabil ist.
+4. Das „Neue Meldung“-Event bekommt `watchlist_treffer` (Liste der passenden
+   Stichwörter), damit Automationen ohne zweiten Trigger filtern können.
+
+**Verworfen:** Konfigurierbares Zeitfenster; Suche in allen Textfeldern.
+
 ## 2026-09-27 – Kaputter Feed-Titel: Fallback auf Produktbezeichnung
 
 **Entscheidung:** Beginnt der Titel einer Meldung mit `$` (der Feed liefert

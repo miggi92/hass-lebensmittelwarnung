@@ -23,6 +23,17 @@
       "reconfigure_successful": "Die Einstellungen wurden aktualisiert."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Watchlist",
+        "description": "Stichwörter, nach denen in Produkt, Hersteller und Grund der Meldungen gesucht wird (Groß-/Kleinschreibung egal, auch Teilwörter). Der Sensor „Watchlist-Treffer“ ist an, solange eine Meldung der letzten 7 Tage passt.",
+        "data": {
+          "stichwoerter": "Stichwörter"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "latest": {
@@ -73,6 +84,9 @@
     "binary_sensor": {
       "recent_warning": {
         "name": "Aktuelle Warnung"
+      },
+      "watchlist": {
+        "name": "Watchlist-Treffer"
       }
     },
     "calendar": {

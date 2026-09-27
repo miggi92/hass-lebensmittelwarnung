@@ -29,6 +29,12 @@
         "state": {
           "on": "mdi:bell-alert"
         }
+      },
+      "watchlist": {
+        "default": "mdi:eye-outline",
+        "state": {
+          "on": "mdi:eye-check"
+        }
       }
     }
   }

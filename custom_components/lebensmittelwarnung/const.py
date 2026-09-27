@@ -8,6 +8,7 @@ DOMAIN: Final = "lebensmittelwarnung"
 
 CONF_STATE: Final = "bundesland"
 CONF_TYPE: Final = "meldungsart"
+CONF_KEYWORDS: Final = "stichwoerter"
 
 DEFAULT_SCAN_INTERVAL: Final = 3600  # Der Feed setzt ttl=60 (Minuten).
 
