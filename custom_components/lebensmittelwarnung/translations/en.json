@@ -23,6 +23,17 @@
       "reconfigure_successful": "Settings updated successfully."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Watchlist",
+        "description": "Keywords searched for in the product, manufacturer and reason of each warning (case-insensitive, partial words match). The \"Watchlist Match\" sensor is on while a warning from the last 7 days matches.",
+        "data": {
+          "stichwoerter": "Keywords"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "latest": {
@@ -73,6 +84,9 @@
     "binary_sensor": {
       "recent_warning": {
         "name": "Recent Warning"
+      },
+      "watchlist": {
+        "name": "Watchlist Match"
       }
     },
     "calendar": {

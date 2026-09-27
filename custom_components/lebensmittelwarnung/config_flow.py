@@ -6,16 +6,25 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlowWithReload,
+)
+from homeassistant.core import callback
 from homeassistant.helpers.selector import (
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
 )
 
-from .const import CONF_STATE, CONF_TYPE, DOMAIN, STATES, TYPES
+from .const import CONF_KEYWORDS, CONF_STATE, CONF_TYPE, DOMAIN, STATES, TYPES
 from .entity import device_id
+from .watchlist import normalize_keywords
 
 
 def _select(options: dict[str, str]) -> SelectSelector:
@@ -51,6 +60,11 @@ class LebensmittelwarnungConfigFlow(ConfigFlow, domain=DOMAIN):
     """Ein Eintrag pro Kombination aus Meldungsart und Bundesland."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> LmwOptionsFlow:
+        return LmwOptionsFlow()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -92,3 +106,27 @@ class LebensmittelwarnungConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reconfigure", data_schema=_schema(entry.data)
         )
+
+
+class LmwOptionsFlow(OptionsFlowWithReload):
+    """Watchlist-Stichwörter pflegen; Speichern lädt den Eintrag neu."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(
+                data={
+                    CONF_KEYWORDS: normalize_keywords(user_input.get(CONF_KEYWORDS))
+                }
+            )
+
+        schema = vol.Schema(
+            {
+                vol.Optional(
+                    CONF_KEYWORDS,
+                    default=self.config_entry.options.get(CONF_KEYWORDS, []),
+                ): TextSelector(TextSelectorConfig(multiple=True)),
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)

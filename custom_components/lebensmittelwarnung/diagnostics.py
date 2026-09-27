@@ -18,6 +18,7 @@ async def async_get_config_entry_diagnostics(
         "entry": {"data": dict(entry.data), "title": entry.title},
         "coordinator": {
             "feed_url": coordinator.feed_url,
+            "keywords": coordinator.keywords,
             "last_update_success": coordinator.last_update_success,
             "last_success": coordinator.last_success,
             "consecutive_failures": coordinator._consecutive_failures,  # noqa: SLF001

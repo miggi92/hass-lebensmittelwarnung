@@ -22,12 +22,14 @@ fehlgeschlagen sind – erst dann gehen die Entities auf `unavailable`. Nicht
 - `shorten()` aus `sensors/base.py` für alles benutzen, was als `native_value`
   in den State geschrieben wird (255-Zeichen-Limit von HA) – nicht für
   `extra_state_attributes`, da gilt das Limit nicht.
-- Der `binary_sensor.py` (`recent_warning`) ist eine eigene Plattform, kein
-  Teil von `sensors/`, weil er kein Feld einer Meldung zeigt, sondern einen
-  reinen Zeitfenster-Zustand (24h seit `published`). Er verwaltet dafür einen
-  eigenen `async_track_point_in_utc_time`-Timer statt sich nur auf den
-  stündlichen Coordinator-Poll zu verlassen (siehe Git-History für den Bug,
-  den das behoben hat).
+- `binary_sensor.py` (`recent_warning`, `watchlist`) ist eine eigene
+  Plattform, kein Teil von `sensors/`, weil die Sensoren kein Feld einer
+  Meldung zeigen, sondern einen Zeitfenster-Zustand (24h bzw. 7 Tage seit
+  `published`). Beide erben von `LmwTimedBinarySensor`, der über
+  `_next_expiry()` einen eigenen `async_track_point_in_utc_time`-Timer plant,
+  statt sich nur auf den stündlichen Coordinator-Poll zu verlassen (siehe
+  Git-History für den Bug, den das behoben hat). Neue zeitabhängige
+  Binary-Sensoren ebenfalls davon ableiten.
 
 **Weitere Plattformen neben `sensors/`:**
 
@@ -43,6 +45,13 @@ fehlgeschlagen sind – erst dann gehen die Entities auf `unavailable`. Nicht
   erfolgreichen Abrufs (wegen der Fehlertoleranz sagt `last_update_success`
   das nicht aus). Der Sensor `last_success` bleibt deshalb auch verfügbar,
   wenn der Coordinator aufgegeben hat.
+
+**Watchlist:** Stichwörter liegen in `entry.options` (`CONF_KEYWORDS`),
+gepflegt über den Options-Flow (`OptionsFlowWithReload` – Speichern lädt den
+Eintrag neu, daher liest der Coordinator sie nur einmal als
+`coordinator.keywords`). Suchlogik und durchsuchte Felder stehen zentral in
+`watchlist.py` (`find_matches`); Binary-Sensor und Event nutzen beide diese
+Funktion.
 
 **Hinweis für lokale Tests:** Die Datei `calendar.py` überdeckt die
 Stdlib-`calendar`, wenn Python direkt aus dem Integrationsordner gestartet

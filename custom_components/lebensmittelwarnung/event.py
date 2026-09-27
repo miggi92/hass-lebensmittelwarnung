@@ -10,6 +10,7 @@ from . import LmwConfigEntry
 from .coordinator import LebensmittelwarnungCoordinator
 from .entity import LmwEntity
 from .sensors.base import entry_attributes
+from .watchlist import find_matches
 
 EVENT_NEW_WARNING = "new_warning"
 
@@ -59,6 +60,13 @@ class LmwNewWarningEvent(LmwEntity, EventEntity):
         for entry in reversed(new):
             self._seen.add(entry["guid"])
             self._trigger_event(
-                EVENT_NEW_WARNING, {"titel": entry["title"], **entry_attributes(entry)}
+                EVENT_NEW_WARNING,
+                {
+                    "titel": entry["title"],
+                    **entry_attributes(entry),
+                    "watchlist_treffer": find_matches(
+                        entry, self.coordinator.keywords
+                    ),
+                },
             )
         super()._handle_coordinator_update()

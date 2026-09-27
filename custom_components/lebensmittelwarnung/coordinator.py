@@ -14,8 +14,16 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
-from .const import DEFAULT_SCAN_INTERVAL, FEED_URL, STATES, TYPES, USER_AGENT
+from .const import (
+    CONF_KEYWORDS,
+    DEFAULT_SCAN_INTERVAL,
+    FEED_URL,
+    STATES,
+    TYPES,
+    USER_AGENT,
+)
 from .parser import parse_entry
+from .watchlist import normalize_keywords
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +55,10 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         # Zeitpunkt des letzten tatsächlich erfolgreichen Abrufs. Wegen der
         # Fehlertoleranz unten ist last_update_success dafür nicht aussagekräftig.
         self.last_success: datetime | None = None
+        # Änderungen kommen über den Options-Flow, der den Eintrag neu lädt.
+        self.keywords: list[str] = normalize_keywords(
+            entry.options.get(CONF_KEYWORDS)
+        )
 
         super().__init__(
             hass,
