@@ -41,6 +41,16 @@ def extract_images(description: str) -> list[str]:
     return [html.unescape(url) for url in _IMG_RE.findall(description)]
 
 
+def _is_unrendered_template(title: str) -> bool:
+    """Erkennt eine nicht ausgefüllte CMS-Vorlage statt eines echten Titels.
+
+    Der Feed liefert seit einiger Zeit wörtlich
+    "$esc.escapeXml($cms.oneLineText($m.title))" als Titel. Echte Titel
+    beginnen nie mit "$".
+    """
+    return title.startswith("$")
+
+
 def parse_entry(entry: Any) -> dict[str, Any]:
     """Einen feedparser-Eintrag in ein flaches Dict überführen."""
     description: str = entry.get("description") or ""
@@ -71,6 +81,15 @@ def parse_entry(entry: Any) -> dict[str, Any]:
     data["reasons"] = (
         [part.strip() for part in reason.split(",") if part.strip()] if reason else []
     )
+
+    # Kaputter Titel im Feed: auf die Produktbezeichnung ausweichen. Sobald
+    # der Feed wieder echte Titel liefert, greift das automatisch nicht mehr.
+    if not data["title"] or _is_unrendered_template(data["title"]):
+        fallback = data.get("product") or data.get("reason") or ""
+        # Titel sind einzeilig (Kalender, Benachrichtigungen).
+        data["title"] = ", ".join(
+            line.strip() for line in fallback.splitlines() if line.strip()
+        )
 
     # "Betroffene Bundesländer" ist ebenfalls eine kommagetrennte Aufzählung.
     states = data.get("states")

@@ -10,6 +10,22 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-27 – Kaputter Feed-Titel: Fallback auf Produktbezeichnung
+
+**Entscheidung:** Beginnt der Titel einer Meldung mit `$` (der Feed liefert
+aktuell wörtlich `$esc.escapeXml($cms.oneLineText($m.title))`), setzt
+`parser.py` stattdessen die Produktbezeichnung (einzeilig, Zeilen mit „, “
+verbunden) ein, ersatzweise den Grund.
+
+**Warum:** Serverseitiger Fehler von lebensmittelwarnung.de – der echte Titel
+steht nirgends im Feed. Betroffen waren „Letzte/Vorherige Meldung“,
+`titel`-Attribute, Event und Kalender. Liefert der Feed wieder echte Titel,
+greift der Fallback automatisch nicht mehr.
+
+**Verworfen:** Den Titel von der verlinkten Detailseite nachladen – zusätzliche
+Requests an einen ohnehin wackeligen Server, und die Seitenstruktur war nicht
+prüfbar.
+
 ## 2026-09-27 – Event-Entity für neue Meldungen, neue Felder als Sensoren
 
 **Entscheidungen:**
