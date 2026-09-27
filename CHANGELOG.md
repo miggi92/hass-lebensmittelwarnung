@@ -3,6 +3,23 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## v0.0.11
+
+[compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.10...v0.0.11)
+
+### ✨ Features
+
+- Event für neue Meldungen, Kalender, Diagnose und weitere Sensoren ([361725b](https://github.com/miggi92/hass-lebensmittelwarnung/commit/361725b))
+
+### 🐛 Bugfixes
+
+- Bei einzelnen Feed-Fehlern letzte Meldungen behalten statt unavailable ([20ed2bf](https://github.com/miggi92/hass-lebensmittelwarnung/commit/20ed2bf))
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.10 aktualisiert ([42ab3a9](https://github.com/miggi92/hass-lebensmittelwarnung/commit/42ab3a9))
+- **agents:** Neue Plattformen und Entscheidungen dokumentiert ([ea2cd8c](https://github.com/miggi92/hass-lebensmittelwarnung/commit/ea2cd8c))
+
 ## v0.0.10
 
 [compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.9...v0.0.10)
