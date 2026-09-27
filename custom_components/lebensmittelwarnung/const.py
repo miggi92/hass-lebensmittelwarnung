@@ -9,6 +9,12 @@ DOMAIN: Final = "lebensmittelwarnung"
 CONF_STATE: Final = "bundesland"
 CONF_TYPE: Final = "meldungsart"
 CONF_KEYWORDS: Final = "stichwoerter"
+# Optionale Produktliste für die Watchlist, z.B. Grocy-Bestand.
+CONF_PRODUCT_ENTITY: Final = "produkt_entity"
+CONF_PRODUCT_ATTRIBUTE: Final = "produkt_attribut"
+CONF_PRODUCT_NAME_KEY: Final = "produkt_namensfeld"
+DEFAULT_PRODUCT_ATTRIBUTE: Final = "products"
+DEFAULT_PRODUCT_NAME_KEY: Final = "name"
 
 DEFAULT_SCAN_INTERVAL: Final = 3600  # Der Feed setzt ttl=60 (Minuten).
 

@@ -14,6 +14,8 @@ from homeassistant.config_entries import (
 )
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    EntitySelector,
+    EntitySelectorConfig,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -22,7 +24,19 @@ from homeassistant.helpers.selector import (
     TextSelectorConfig,
 )
 
-from .const import CONF_KEYWORDS, CONF_STATE, CONF_TYPE, DOMAIN, STATES, TYPES
+from .const import (
+    CONF_KEYWORDS,
+    CONF_PRODUCT_ATTRIBUTE,
+    CONF_PRODUCT_ENTITY,
+    CONF_PRODUCT_NAME_KEY,
+    CONF_STATE,
+    CONF_TYPE,
+    DEFAULT_PRODUCT_ATTRIBUTE,
+    DEFAULT_PRODUCT_NAME_KEY,
+    DOMAIN,
+    STATES,
+    TYPES,
+)
 from .entity import device_id
 from .watchlist import normalize_keywords
 
@@ -109,24 +123,53 @@ class LebensmittelwarnungConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class LmwOptionsFlow(OptionsFlowWithReload):
-    """Watchlist-Stichwörter pflegen; Speichern lädt den Eintrag neu."""
+    """Watchlist pflegen; Speichern lädt den Eintrag neu."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         if user_input is not None:
-            return self.async_create_entry(
-                data={
-                    CONF_KEYWORDS: normalize_keywords(user_input.get(CONF_KEYWORDS))
-                }
-            )
+            data: dict[str, Any] = {
+                CONF_KEYWORDS: normalize_keywords(user_input.get(CONF_KEYWORDS)),
+                CONF_PRODUCT_ATTRIBUTE: (
+                    user_input.get(CONF_PRODUCT_ATTRIBUTE) or ""
+                ).strip()
+                or DEFAULT_PRODUCT_ATTRIBUTE,
+                CONF_PRODUCT_NAME_KEY: (
+                    user_input.get(CONF_PRODUCT_NAME_KEY) or ""
+                ).strip()
+                or DEFAULT_PRODUCT_NAME_KEY,
+            }
+            # Die Produktliste ist optional: ohne Entity wird sie nicht genutzt.
+            if entity_id := user_input.get(CONF_PRODUCT_ENTITY):
+                data[CONF_PRODUCT_ENTITY] = entity_id
+            return self.async_create_entry(data=data)
 
+        options = self.config_entry.options
         schema = vol.Schema(
             {
                 vol.Optional(
-                    CONF_KEYWORDS,
-                    default=self.config_entry.options.get(CONF_KEYWORDS, []),
+                    CONF_KEYWORDS, default=options.get(CONF_KEYWORDS, [])
                 ): TextSelector(TextSelectorConfig(multiple=True)),
+                vol.Optional(CONF_PRODUCT_ENTITY): EntitySelector(
+                    EntitySelectorConfig()
+                ),
+                vol.Optional(
+                    CONF_PRODUCT_ATTRIBUTE,
+                    default=options.get(
+                        CONF_PRODUCT_ATTRIBUTE, DEFAULT_PRODUCT_ATTRIBUTE
+                    ),
+                ): TextSelector(),
+                vol.Optional(
+                    CONF_PRODUCT_NAME_KEY,
+                    default=options.get(
+                        CONF_PRODUCT_NAME_KEY, DEFAULT_PRODUCT_NAME_KEY
+                    ),
+                ): TextSelector(),
             }
+        )
+        # suggested_value statt default, damit sich die Entity wieder leeren lässt.
+        schema = self.add_suggested_values_to_schema(
+            schema, {CONF_PRODUCT_ENTITY: options.get(CONF_PRODUCT_ENTITY)}
         )
         return self.async_show_form(step_id="init", data_schema=schema)

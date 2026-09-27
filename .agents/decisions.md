@@ -10,6 +10,31 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-27 – Watchlist: optionale Produktliste aus einer Entity (Grocy)
+
+**Entscheidungen:**
+
+1. Die Produktliste ist generisch konfigurierbar (Entity + Attribut +
+   Namensfeld, Defaults `products`/`name` passend zu Grocy) statt einer
+   festen Grocy-Anbindung – nicht jeder hat Grocy, und Entity-Namen
+   unterscheiden sich. Das Attribut darf auch eine Liste von Strings sein.
+2. Produktnamen werden per **Wortregel** abgeglichen: alle Wörter mit ≥ 4
+   Zeichen müssen in Produkt/Hersteller/Grund vorkommen (je als Teilwort).
+   So findet „Bio Wildheidelbeeren TK“ auch „EDEKA Bio Wildheidelbeeren
+   tiefgefroren“. Namen ohne solches Wort („Ibu 400“) werden nie gemeldet.
+3. Treffer zeigen die Quelle: im Sensor-Attribut `treffer` getrennt als
+   `stichwoerter`/`produkte`; im Event enthält `watchlist_treffer` beide
+   zusammen (einfaches Filtern), `watchlist_produkte` nur die aus der Liste.
+
+**Warum:** Nutzerwunsch. Vorher geprüft: Der Grocy-Bestand des Nutzers hat
+keine Barcodes, der Feed keine EANs und Grocy keine Chargennummern – ein
+exakter Abgleich ist nicht möglich, es bleibt nur der Name. Reine
+Teilstring-Suche des ganzen Namens hätte abweichende Schreibweisen verpasst.
+
+**Verworfen:** Direkte Abfrage der Grocy-API (eigene Zugangsdaten, doppelte
+Konfiguration neben der bestehenden Grocy-Integration); Barcode-/Chargen-Abgleich
+(Daten fehlen auf beiden Seiten).
+
 ## 2026-09-27 – Watchlist-Binary-Sensor per Options-Flow
 
 **Entscheidungen (Nutzerentscheidungen aus einer expliziten Rückfrage):**

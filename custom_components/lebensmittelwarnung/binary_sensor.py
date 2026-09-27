@@ -9,14 +9,17 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_track_point_in_utc_time
+from homeassistant.helpers.event import (
+    async_track_point_in_utc_time,
+    async_track_state_change_event,
+)
 from homeassistant.util import dt as dt_util
 
 from . import LmwConfigEntry
 from .entity import LmwEntity
-from .watchlist import WATCHLIST_WINDOW, find_matches
+from .watchlist import WATCHLIST_WINDOW, find_matches, find_product_matches
 
 RECENT_WINDOW = timedelta(hours=24)
 
@@ -110,7 +113,11 @@ class LmwRecentWarning(LmwTimedBinarySensor):
 
 
 class LmwWatchlistMatch(LmwTimedBinarySensor):
-    """An, wenn eine Meldung der letzten 7 Tage ein Stichwort enthält."""
+    """An, wenn eine Meldung der letzten 7 Tage auf die Watchlist passt.
+
+    Watchlist = eigene Stichwörter plus optional die Produktnamen aus einer
+    Entity (z.B. Grocy-Bestand).
+    """
 
     _attr_translation_key = "watchlist"
     _attr_device_class = BinarySensorDeviceClass.PROBLEM
@@ -118,9 +125,25 @@ class LmwWatchlistMatch(LmwTimedBinarySensor):
     def __init__(self, coordinator) -> None:
         super().__init__(coordinator, "watchlist")
 
-    def _matches(self) -> list[tuple[dict[str, Any], list[str]]]:
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if entity_id := self.coordinator.product_entity:
+            # Ändert sich der Bestand, kann sich der Zustand ändern.
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass, [entity_id], self._handle_products_changed
+                )
+            )
+
+    @callback
+    def _handle_products_changed(self, _event: Event[EventStateChangedData]) -> None:
+        self._schedule_expiry()
+        self.async_write_ha_state()
+
+    def _matches(self) -> list[tuple[dict[str, Any], list[str], list[str]]]:
         keywords = self.coordinator.keywords
-        if not keywords:
+        products = self.coordinator.product_names()
+        if not keywords and not products:
             return []
         since = dt_util.utcnow() - WATCHLIST_WINDOW
         result = []
@@ -128,8 +151,10 @@ class LmwWatchlistMatch(LmwTimedBinarySensor):
             published = entry.get("published")
             if published is None or published <= since:
                 continue
-            if found := find_matches(entry, keywords):
-                result.append((entry, found))
+            found_keywords = find_matches(entry, keywords)
+            found_products = find_product_matches(entry, products)
+            if found_keywords or found_products:
+                result.append((entry, found_keywords, found_products))
         return result
 
     @property
@@ -140,20 +165,22 @@ class LmwWatchlistMatch(LmwTimedBinarySensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         return {
             "stichwoerter": self.coordinator.keywords,
+            "produktliste": self.coordinator.product_entity,
             "treffer": [
                 {
                     "titel": entry["title"],
                     "link": entry["link"],
-                    "stichwoerter": found,
+                    "stichwoerter": found_keywords,
+                    "produkte": found_products,
                     "veroeffentlicht": entry.get("published"),
                 }
-                for entry, found in self._matches()
+                for entry, found_keywords, found_products in self._matches()
             ],
         }
 
     def _next_expiry(self) -> datetime | None:
         # Die älteste noch passende Meldung fällt als erste aus dem Fenster.
         expiries = [
-            entry["published"] + WATCHLIST_WINDOW for entry, _ in self._matches()
+            entry["published"] + WATCHLIST_WINDOW for entry, _, _ in self._matches()
         ]
         return min(expiries) if expiries else None

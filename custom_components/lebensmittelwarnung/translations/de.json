@@ -27,9 +27,17 @@
     "step": {
       "init": {
         "title": "Watchlist",
-        "description": "Stichwörter, nach denen in Produkt, Hersteller und Grund der Meldungen gesucht wird (Groß-/Kleinschreibung egal, auch Teilwörter). Der Sensor „Watchlist-Treffer“ ist an, solange eine Meldung der letzten 7 Tage passt.",
+        "description": "Stichwörter werden in Produkt, Hersteller und Grund der Meldungen gesucht (Groß-/Kleinschreibung egal, auch Teilwörter). Optional kann zusätzlich eine Produktliste aus einer Entity geprüft werden, z.B. der Grocy-Bestand. Der Sensor „Watchlist-Treffer“ ist an, solange eine Meldung der letzten 7 Tage passt.",
         "data": {
-          "stichwoerter": "Stichwörter"
+          "stichwoerter": "Stichwörter",
+          "produkt_entity": "Produktliste (Entity)",
+          "produkt_attribut": "Attribut mit der Produktliste",
+          "produkt_namensfeld": "Feld mit dem Produktnamen"
+        },
+        "data_description": {
+          "produkt_entity": "Optional, z.B. sensor.grocy_stock. Leer lassen, wenn keine Produktliste genutzt werden soll.",
+          "produkt_attribut": "Attribut der Entity, das die Produkte als Liste enthält (bei Grocy: products).",
+          "produkt_namensfeld": "Schlüssel des Namens in jedem Listeneintrag (bei Grocy: name). Enthält die Liste direkt Texte, wird dieses Feld ignoriert."
         }
       }
     }

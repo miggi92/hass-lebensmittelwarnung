@@ -36,6 +36,72 @@ Copy the `custom_components/lebensmittelwarnung` folder to your Home Assistant `
 5. Enter the relevant information for the integration (e.g. your location or preferences as required by the integration)
 6. Click on `Submit`
 
+### Watchlist
+
+Open the integration entry and click `Configure` to set up a watchlist:
+
+- **Keywords**: searched for in the product, manufacturer and reason of each
+  warning (case-insensitive, partial words match, so `Käse` also finds
+  `Weinbauernkäse`).
+- **Product list (optional)**: an entity whose attribute contains a list of
+  products, e.g. your [Grocy](https://github.com/custom-components/grocy)
+  stock (`sensor.grocy_stock`, attribute `products`, field `name`). A product
+  matches if all of its words with at least 4 characters appear in the
+  warning, so `Bio Wildheidelbeeren TK` also finds
+  `EDEKA Bio Wildheidelbeeren tiefgefroren`.
+
+The binary sensor `Watchlist Match` is on while a warning from the last 7 days
+matches. Each new warning additionally fires the `New Warning` event, whose
+`watchlist_treffer` attribute lists all matches (keywords and products) and
+`watchlist_produkte` only the matches from the product list.
+
+## Example automation: notify on watchlist matches
+
+Sends a push notification for every new warning that matches your watchlist.
+The event entity fires exactly once per new warning – not on restarts, reloads
+or when the feed is temporarily unavailable – which makes it the right trigger
+for notifications.
+
+Replace the entity ID (it depends on your federal state and your Home
+Assistant language, e.g. `event.lebensmittelwarnung_bayern_new_warning` in
+English) and the notify service with your own.
+
+```yaml
+alias: Lebensmittelwarnung – Watchlist-Treffer
+description: Benachrichtigt bei neuen Warnungen, die auf die Watchlist passen.
+mode: queued
+triggers:
+  - trigger: state
+    entity_id: event.lebensmittelwarnung_bayern_neue_meldung
+    # Ignore the entity becoming available again after a restart or reload.
+    not_from:
+      - unavailable
+    not_to:
+      - unavailable
+conditions:
+  - condition: template
+    value_template: >
+      {{ trigger.to_state.attributes.watchlist_treffer | default([]) | length > 0 }}
+actions:
+  - action: notify.mobile_app_mein_handy
+    data:
+      title: "⚠️ Rückruf: {{ trigger.to_state.attributes.titel }}"
+      message: >
+        Treffer: {{ trigger.to_state.attributes.watchlist_treffer | join(', ') }}
+        {%- if trigger.to_state.attributes.watchlist_produkte %}
+        (aus deinem Vorrat){% endif %}
+
+        Grund: {{ trigger.to_state.attributes.grund }}
+
+        Hersteller: {{ trigger.to_state.attributes.hersteller }}
+      data:
+        url: "{{ trigger.to_state.attributes.link }}"
+        clickAction: "{{ trigger.to_state.attributes.link }}"
+```
+
+`url` opens the warning on iOS, `clickAction` on Android when tapping the
+notification.
+
 ## Screenshots
 
 ![Screenshot Integration Screen](https://github.com/miggi92/hass-lebensmittelwarnung/blob/main/assets/screenshots/integration_screen.png)
