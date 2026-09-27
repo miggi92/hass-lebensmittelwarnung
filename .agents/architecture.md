@@ -6,6 +6,11 @@ Bundesland (`state_key`). Jede Kombination bekommt einen eigenen
 die letzten `MAX_ENTRIES` geparsten Meldungen als Liste hält
 (`coordinator.data`, neueste zuerst; `coordinator.latest` ist `data[0]`).
 
+**Fehlertoleranz:** Schlägt ein Feed-Abruf fehl, liefert der Coordinator die
+letzten bekannten Daten weiter, bis `MAX_CONSECUTIVE_FAILURES` Polls in Folge
+fehlgeschlagen sind – erst dann gehen die Entities auf `unavailable`. Nicht
+"vereinfachen" zu einem direkten `raise UpdateFailed`, siehe `decisions.md`.
+
 **Sensoren:** ein Sensor pro Feld, eine Datei pro Sensor, unter `sensors/`.
 
 - Neuer Sensor → Datei in `sensors/`, Klasse erbt von `LmwSensorBase`

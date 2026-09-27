@@ -10,6 +10,22 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-27 – Einzelne Feed-Fehler lassen Entities nicht mehr `unavailable` werden
+
+**Entscheidung:** Der Coordinator toleriert bis zu `MAX_CONSECUTIVE_FAILURES - 1`
+fehlgeschlagene Polls in Folge (aktuell 2, also ~2h) und liefert solange die
+letzten bekannten Meldungen weiter (mit Warning im Log). Erst beim dritten
+Fehlschlag in Folge wird `UpdateFailed` durchgereicht.
+
+**Warum:** lebensmittelwarnung.de bricht Verbindungen sporadisch ab
+("Connection reset by peer", DNS-Timeouts). Jeder dieser Aussetzer setzte
+alle Sensoren für eine Stunde auf `unavailable` und danach zurück – eine
+Automation auf Zustandsänderungen von "Produktbezeichnung" verschickte
+dadurch doppelte Benachrichtigungen mit `unavailable`-Werten.
+
+**Verworfen:** Nur in der Automation `unavailable`/`unknown` filtern – hilft
+dem Nutzer, lässt aber Verlauf und andere Konsumenten weiter flackern.
+
 ## 2026-09-11 – `.agents/AGENTS.md` ist ein Verweis, kein zweiter Index
 
 **Entscheidung:** `.agents/AGENTS.md` importiert die Themendateien nicht
