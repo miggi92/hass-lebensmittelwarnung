@@ -3,6 +3,24 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## v0.0.12
+
+[compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.11...v0.0.12)
+
+### ✨ Features
+
+- Watchlist-Sensor für Stichwörter in Meldungen ([84b73c8](https://github.com/miggi92/hass-lebensmittelwarnung/commit/84b73c8))
+- Watchlist kann zusätzlich eine Produktliste (z.B. Grocy) prüfen ([452cd8c](https://github.com/miggi92/hass-lebensmittelwarnung/commit/452cd8c))
+
+### 🐛 Bugfixes
+
+- Produktbezeichnung als Titel, wenn der Feed eine leere Vorlage liefert ([7a417ee](https://github.com/miggi92/hass-lebensmittelwarnung/commit/7a417ee))
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.11 aktualisiert ([d506457](https://github.com/miggi92/hass-lebensmittelwarnung/commit/d506457))
+- Watchlist und Beispiel-Automation für Watchlist-Treffer im README ([fb41882](https://github.com/miggi92/hass-lebensmittelwarnung/commit/fb41882))
+
 ## v0.0.11
 
 [compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.10...v0.0.11)
