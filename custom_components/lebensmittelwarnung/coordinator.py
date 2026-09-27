@@ -20,6 +20,12 @@ _LOGGER = logging.getLogger(__name__)
 
 MAX_ENTRIES = 10
 
+# So viele Polls hintereinander dürfen fehlschlagen, bevor die Entities auf
+# "unavailable" gehen. Der Server bricht Verbindungen gelegentlich ab (oder
+# DNS hakt kurz); ohne Toleranz springt dann jeder Sensor für eine Stunde auf
+# "unavailable" und wieder zurück, was Automationen doppelt auslöst.
+MAX_CONSECUTIVE_FAILURES = 3
+
 
 class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
     """Ruft den Feed ab und liefert eine Liste geparster Meldungen."""
@@ -36,6 +42,7 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         self.state_key = state_key
         self.state_name = STATES.get(state_key, state_key)
         self._session = async_get_clientsession(hass)
+        self._consecutive_failures = 0
 
         super().__init__(
             hass,
@@ -60,6 +67,27 @@ class LebensmittelwarnungCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]
         return self.data[0] if self.data else None
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
+        try:
+            entries = await self._async_fetch_entries()
+        except UpdateFailed as err:
+            self._consecutive_failures += 1
+            if (
+                self.data is not None
+                and self._consecutive_failures < MAX_CONSECUTIVE_FAILURES
+            ):
+                _LOGGER.warning(
+                    "%s (Versuch %s/%s), behalte letzte bekannte Meldungen",
+                    err,
+                    self._consecutive_failures,
+                    MAX_CONSECUTIVE_FAILURES,
+                )
+                return self.data
+            raise
+
+        self._consecutive_failures = 0
+        return entries
+
+    async def _async_fetch_entries(self) -> list[dict[str, Any]]:
         try:
             response = await self._session.get(
                 self.feed_url, headers={"User-Agent": USER_AGENT}
