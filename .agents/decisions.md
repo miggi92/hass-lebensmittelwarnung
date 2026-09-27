@@ -10,6 +10,33 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-09-27 – Event-Entity für neue Meldungen, neue Felder als Sensoren
+
+**Entscheidungen:**
+
+1. Neue `event`-Entity `new_warning`, die pro neuer `guid` genau einmal
+   feuert. Beim Start sind alle aktuellen Feed-Einträge „bekannt“; gesehene
+   guids werden nicht wieder vergessen (auch nicht, wenn sie aus den
+   `MAX_ENTRIES` herausfallen).
+2. Bisher nur geparste Felder bekommen eigene Sensoren: Verpackungseinheit
+   (`package`) und Betroffene Bundesländer (`affected_states`, zusätzlich als
+   Liste im Attribut `bundeslaender`). „Kontakt“ nur als Attribut
+   (`kontakt`) am Hersteller-Sensor und in den Detail-Attributen – ein
+   eigener Sensor lohnt sich dafür nicht.
+3. Kalender-Termine sind ganztägig am Veröffentlichungstag, nicht 24h ab
+   `published` – das 24h-Fenster bleibt Sache von `binary_sensor.aktuelle_warnung`.
+4. `recent_count` (Meldungen der letzten 7 Tage) zählt nur die gehaltenen
+   `MAX_ENTRIES` Einträge, ist also bei sehr vielen Meldungen eine
+   Untergrenze. Bewusst so, statt dafür mehr Einträge zu halten.
+
+**Warum:** (1) behebt das Problem doppelter Benachrichtigungen grundsätzlich:
+Zustandsänderungen von Sensoren (Neustart, `unavailable`) sind kein
+verlässlicher „neue Meldung“-Trigger. (2)–(4) Nutzerwunsch aus einer
+Vorschlagsrunde.
+
+**Offen:** Watchlist-Binary-Sensor (Stichwörter per Options-Flow) wurde
+vorgeschlagen, aber auf später verschoben.
+
 ## 2026-09-27 – Einzelne Feed-Fehler lassen Entities nicht mehr `unavailable` werden
 
 **Entscheidung:** Der Coordinator toleriert bis zu `MAX_CONSECUTIVE_FAILURES - 1`

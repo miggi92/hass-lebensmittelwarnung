@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from .base import LmwSensorBase, shorten
 
 
@@ -15,3 +17,8 @@ class LmwManufacturerSensor(LmwSensorBase):
     def native_value(self) -> str | None:
         entry = self.coordinator.latest
         return shorten(entry.get("manufacturer")) if entry else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        entry = self.coordinator.latest
+        return {"kontakt": entry.get("contact")} if entry else None

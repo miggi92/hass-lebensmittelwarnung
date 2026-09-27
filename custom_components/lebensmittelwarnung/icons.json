@@ -8,7 +8,17 @@
       "product": { "default": "mdi:package-variant-closed" },
       "manufacturer": { "default": "mdi:factory" },
       "count": { "default": "mdi:counter" },
-      "published": { "default": "mdi:clock-outline" }
+      "published": { "default": "mdi:clock-outline" },
+      "package": { "default": "mdi:package-variant" },
+      "affected_states": { "default": "mdi:map-marker-radius" },
+      "recent_count": { "default": "mdi:calendar-week" },
+      "last_success": { "default": "mdi:cloud-check-outline" }
+    },
+    "event": {
+      "new_warning": { "default": "mdi:bell-ring-outline" }
+    },
+    "calendar": {
+      "warnings": { "default": "mdi:calendar-alert" }
     },
     "image": {
       "product_image": { "default": "mdi:image-search-outline" }

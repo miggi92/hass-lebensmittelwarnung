@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .base import LmwSensorBase, shorten
+from .base import LmwSensorBase, entry_attributes, shorten
 
 
 class LmwPreviousSensor(LmwSensorBase):
@@ -28,16 +28,4 @@ class LmwPreviousSensor(LmwSensorBase):
         entry = self._entry
         if entry is None:
             return None
-        return {
-            "link": entry["link"],
-            "grund": entry.get("reason"),
-            "gruende": entry.get("reasons"),
-            "charge": entry.get("batch"),
-            "haltbarkeit": entry.get("expiry"),
-            "produkt": entry.get("product"),
-            "verpackungseinheit": entry.get("package"),
-            "hersteller": entry.get("manufacturer"),
-            "bild": entry.get("image"),
-            "bilder": entry.get("images"),
-            "veroeffentlicht": entry.get("published"),
-        }
+        return entry_attributes(entry)

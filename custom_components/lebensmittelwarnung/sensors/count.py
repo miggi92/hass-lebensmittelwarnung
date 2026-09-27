@@ -6,7 +6,7 @@ from typing import Any
 
 from homeassistant.const import EntityCategory
 
-from .base import LmwSensorBase
+from .base import LmwSensorBase, entry_attributes
 
 
 class LmwCountSensor(LmwSensorBase):
@@ -24,20 +24,7 @@ class LmwCountSensor(LmwSensorBase):
     def extra_state_attributes(self) -> dict[str, Any] | None:
         return {
             "meldungen": [
-                {
-                    "titel": entry["title"],
-                    "link": entry["link"],
-                    "grund": entry.get("reason"),
-                    "gruende": entry.get("reasons"),
-                    "charge": entry.get("batch"),
-                    "haltbarkeit": entry.get("expiry"),
-                    "produkt": entry.get("product"),
-                    "verpackungseinheit": entry.get("package"),
-                    "hersteller": entry.get("manufacturer"),
-                    "bild": entry.get("image"),
-                    "bilder": entry.get("images"),
-                    "veroeffentlicht": entry.get("published"),
-                }
+                {"titel": entry["title"], **entry_attributes(entry)}
                 for entry in self.coordinator.data or []
             ]
         }

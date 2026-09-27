@@ -21,6 +21,25 @@ def shorten(value: Any) -> str | None:
     return text[:MAX_STATE_LENGTH]
 
 
+def entry_attributes(entry: dict[str, Any]) -> dict[str, Any]:
+    """Alle Details einer Meldung als Attribute (ohne Titel)."""
+    return {
+        "link": entry["link"],
+        "grund": entry.get("reason"),
+        "gruende": entry.get("reasons"),
+        "charge": entry.get("batch"),
+        "haltbarkeit": entry.get("expiry"),
+        "produkt": entry.get("product"),
+        "verpackungseinheit": entry.get("package"),
+        "hersteller": entry.get("manufacturer"),
+        "kontakt": entry.get("contact"),
+        "betroffene_bundeslaender": entry.get("affected_states"),
+        "bild": entry.get("image"),
+        "bilder": entry.get("images"),
+        "veroeffentlicht": entry.get("published"),
+    }
+
+
 class LmwSensorBase(LmwEntity, SensorEntity):
     """Basis für einen Sensor, der ein Feld der jüngsten Meldung zeigt."""
 

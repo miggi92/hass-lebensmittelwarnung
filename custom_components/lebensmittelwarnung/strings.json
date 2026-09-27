@@ -51,6 +51,18 @@
       },
       "published": {
         "name": "Veröffentlicht"
+      },
+      "package": {
+        "name": "Verpackungseinheit"
+      },
+      "affected_states": {
+        "name": "Betroffene Bundesländer"
+      },
+      "recent_count": {
+        "name": "Meldungen letzte 7 Tage"
+      },
+      "last_success": {
+        "name": "Letzter erfolgreicher Abruf"
       }
     },
     "image": {
@@ -61,6 +73,23 @@
     "binary_sensor": {
       "recent_warning": {
         "name": "Aktuelle Warnung"
+      }
+    },
+    "calendar": {
+      "warnings": {
+        "name": "Meldungen"
+      }
+    },
+    "event": {
+      "new_warning": {
+        "name": "Neue Meldung",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "new_warning": "Neue Meldung"
+            }
+          }
+        }
       }
     }
   }

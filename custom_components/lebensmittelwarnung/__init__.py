@@ -9,7 +9,13 @@ from homeassistant.core import HomeAssistant
 from .const import CONF_STATE, CONF_TYPE
 from .coordinator import LebensmittelwarnungCoordinator
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.IMAGE, Platform.BINARY_SENSOR]
+PLATFORMS: list[Platform] = [
+    Platform.SENSOR,
+    Platform.IMAGE,
+    Platform.BINARY_SENSOR,
+    Platform.EVENT,
+    Platform.CALENDAR,
+]
 
 type LmwConfigEntry = ConfigEntry[LebensmittelwarnungCoordinator]
 
