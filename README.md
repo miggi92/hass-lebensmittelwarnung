@@ -73,12 +73,16 @@ mode: queued
 triggers:
   - trigger: state
     entity_id: event.lebensmittelwarnung_bayern_neue_meldung
-    # Ignore the entity becoming available again after a restart or reload.
-    not_from:
-      - unavailable
-    not_to:
-      - unavailable
 conditions:
+  # Ignore the entity becoming available again after a restart or reload.
+  # Don't use not_from/not_to on the trigger instead: several warnings from
+  # the same poll share a timestamp, and those filters drop attribute-only
+  # changes, so all but the first warning would be lost.
+  - condition: template
+    value_template: >-
+      {{ trigger.from_state is not none
+         and trigger.from_state.state != 'unavailable'
+         and trigger.to_state.state != 'unavailable' }}
   - condition: template
     value_template: >
       {{ trigger.to_state.attributes.watchlist_treffer | default([]) | length > 0 }}

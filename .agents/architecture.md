@@ -36,7 +36,12 @@ fehlgeschlagen sind – erst dann gehen die Entities auf `unavailable`. Nicht
 - `event.py` (`new_warning`) feuert ein Event pro neuer `guid`. Beim Start
   gilt alles im Feed als bekannt (keine Event-Flut nach Neustart), gesehene
   guids werden nie vergessen. Das ist der empfohlene Trigger für
-  Benachrichtigungen, siehe `decisions.md`.
+  Benachrichtigungen, siehe `decisions.md`. Nach jedem `_trigger_event`
+  wird der State geschrieben – mehrere neue Meldungen aus einem Poll haben
+  denselben Zeitstempel als State, unterscheiden sich also nur in den
+  Attributen. Deshalb dürfen Beispiel-Automationen am State-Trigger kein
+  `not_from`/`not_to` nutzen (die ignorieren reine Attributänderungen),
+  sondern filtern `unavailable` per Template-Bedingung (siehe README).
 - `calendar.py` zeigt die gehaltenen Meldungen als ganztägige Termine am
   (lokalen) Tag der Veröffentlichung.
 - `diagnostics.py` liefert Coordinator-Status und geparste Meldungen für den
