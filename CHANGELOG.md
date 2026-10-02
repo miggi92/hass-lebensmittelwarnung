@@ -3,6 +3,19 @@
 Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
 Dieser Abschnitt wird automatisch bei jedem Release aus den Commit-Messages
 erzeugt.
+## v0.0.13
+
+[compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.12...v0.0.13)
+
+### 🐛 Bugfixes
+
+- Event meldet jede neue Meldung, auch mehrere aus einem Abruf ([e4b931b](https://github.com/miggi92/hass-lebensmittelwarnung/commit/e4b931b))
+- Feedparser-Requirement kompatibel zur HA-Vorgabe ([1194af1](https://github.com/miggi92/hass-lebensmittelwarnung/commit/1194af1))
+
+### 📚 Dokumentation
+
+- Changelog für v0.0.12 aktualisiert ([0a613c3](https://github.com/miggi92/hass-lebensmittelwarnung/commit/0a613c3))
+
 ## v0.0.12
 
 [compare changes](https://github.com/miggi92/hass-lebensmittelwarnung/compare/v0.0.11...v0.0.12)
