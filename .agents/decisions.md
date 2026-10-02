@@ -10,6 +10,20 @@ Eintrag ergänzen – im selben PR, nicht als Nachtrag.
 
 ---
 
+## 2026-10-02 – `feedparser` mit Untergrenze statt festem Pin
+
+**Entscheidung:** `manifest.json` verlangt `feedparser>=6.0.12` statt
+`feedparser==6.0.14`.
+
+**Warum:** Home Assistant gibt `feedparser` selbst fest vor (aktuell 6.0.12 in
+der Entwicklerversion). Ein abweichender fester Pin macht hassfest rot
+(`hassfest@master` prüft gegen die HA-Entwicklerversion) und kann bei der
+Installation mit den HA-Constraints kollidieren. Mit Untergrenze nimmt pip die
+Version, die die jeweilige HA-Installation vorgibt.
+
+**Nicht „aufräumen“:** Nicht wieder auf `==` umstellen, und Renovate-Updates,
+die den Pin hochziehen wollen, nicht blind mergen.
+
 ## 2026-09-27 – Watchlist: optionale Produktliste aus einer Entity (Grocy)
 
 **Entscheidungen:**
