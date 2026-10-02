@@ -72,4 +72,8 @@ class LmwNewWarningEvent(LmwEntity, EventEntity):
                     "watchlist_produkte": found_products,
                 },
             )
-        super()._handle_coordinator_update()
+            # Pro Event schreiben: sonst sähen State-Trigger bei mehreren
+            # neuen Meldungen in einem Poll nur die letzte.
+            self.async_write_ha_state()
+        if not new:
+            super()._handle_coordinator_update()
